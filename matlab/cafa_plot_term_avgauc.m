@@ -89,6 +89,7 @@ function [] = cafa_plot_term_avgauc(pfile, pttl, aucs, ont, yaxis)
   validateattributes(aucs, {'cell'}, {'nonempty'}, '', 'aucs', 3);
   n = numel(aucs);
   m = numel(aucs{1}.term);
+  disp(['number of terms for ', f, ' is ', num2str(m)]);
 
   % ont
   validateattributes(ont, {'struct'}, {}, '', 'ont', 4);

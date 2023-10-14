@@ -54,9 +54,15 @@ function [] = cafa_driver_import(idir, odir, ont)
   end
   % }}}
 
+  % parallel evaluation for batch running
+  p = gcp('nocreate');
+  if isempty(p)
+    parpool(16);
+  end
+
   % import (filtered) models and save to <odir> {{{
   files = dir(fullfile(idir, 'M*'));
-  for i = 1 : numel(files)
+  parfor i = 1 : numel(files)
     [~, mid] = fileparts(files(i).name);
     fprintf('importing model [%s]\n', mid);
 

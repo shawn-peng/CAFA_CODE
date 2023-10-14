@@ -1,0 +1,25 @@
+
+resdir = '~/workspace/cafa4/results/PASSED'
+filtereddir = '~/workspace/cafa4/results_filtered/'
+bmdir = '~/workspace/cafa4/annotations/benchmark/'
+
+species_list = {
+    '10090';
+    '10116';
+    '3702';
+    '44689';
+    '559292';
+    '7227';
+    '7955';
+    '9606';
+    '9823';
+};
+
+n = size(species_list, 1);
+
+for i = 1:n
+    species = species_list{i}
+    bm = [bmdir, species, '.csv'];
+    outdir = [filtereddir, species, '/'];
+    cafa_driver_filter(resdir, outdir, bm)
+end

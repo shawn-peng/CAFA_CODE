@@ -96,14 +96,23 @@ function [] = cafa_driver_preeval(cfg)
   end
   % }}}
 
+  % parallel evaluation for batch running
+  p = gcp('nocreate');
+  if isempty(p)
+%     parpool(16);
+  end
+
   % pre-evaluation {{{
   % we assume baseline models has been imported and saved to the prediction
   % subfolders for each ontology.
   for i = 1 : numel(config.model)
+%   for i = 1 : numel(config.model)
     mid = config.model{i};
     fprintf('pre-evaluating model [%s] on [%s]\n', mid, config.ont);
     % load prediction structure
-    load(fullfile(config.pred_dir, strcat(mid, '.mat')), 'pred');
+    
+    pred = load(fullfile(config.pred_dir, strcat(mid, '.mat')), 'pred');
+    pred = pred.pred;
     ofile = fullfile(config.prev_dir, strcat(mid, '.mat'));
 
     % pre-evaluation a single model {{{

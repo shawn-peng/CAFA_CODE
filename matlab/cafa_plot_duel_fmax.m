@@ -76,7 +76,7 @@ function [] = cafa_plot_duel_fmax(pfile, data, bsl_data, ont)
   validateattributes(bsl_data, {'cell'}, {'numel', 4}, '', 'bsl_data', 3);
 
   % ont
-  ont = validatestring(ont, {'mfo', 'bpo'}, '', 'ont', 4);
+  ont = validatestring(ont, {'mfo', 'bpo', 'cco'}, '', 'ont', 4);
   switch ont
     case 'mfo'
       yrange  = [0.2, 0.7];
@@ -84,6 +84,9 @@ function [] = cafa_plot_duel_fmax(pfile, data, bsl_data, ont)
     case 'bpo'
       yrange  = [0.0, 0.5];
       ontname = 'Biological Process';
+    case 'cco'
+      yrange  = [0.2, 0.8];
+      ontname = 'Cellular Component';
     otherwise
       % nop
   end
@@ -121,8 +124,8 @@ function [] = cafa_plot_duel_fmax(pfile, data, bsl_data, ont)
   bw_bsl  = 0.3; % 0.3 unit in x-axis
   bh_bsl  = bw_bsl / bar_xrange * bar_yrange * baar * aspect_ratio;
 
-  ll_x = linspace(0, 1, m+1); ll_x(end) = [];
-  ll_y = linspace(0, 1, n+1); ll_y(end) = [];
+  ll_x = linspace(0, 1, n+1); ll_x(end) = [];
+  ll_y = linspace(0, 1, m+1); ll_y(end) = [];
   ll_bsl = [mean([bar_xmax; bar_xmin]) - 0.5*bw_bsl, bar_ymax - bh_bsl];
   % }}}
 
@@ -144,13 +147,13 @@ function [] = cafa_plot_duel_fmax(pfile, data, bsl_data, ont)
   ax_main.XTick = {};
   ax_main.YTick = {};
   ax_main.XAxisLocation = 'top';
-  ax_main.YLabel.String = 'CAFA1 top 5 models';
-  ax_main.XLabel.String = 'CAFA2 top 5 models';
+  ax_main.YLabel.String = 'CAFA3 top 5 models';
+  ax_main.XLabel.String = 'CAFA4 top 5 models';
   ax_main.Visible = 'off';
 
   text(-0.1, 1.15, 'A.', 'FontSize', 14, 'FontWeight', 'bold');
-  text(-0.05, 1-padding, 'CAFA1 top models \rightarrow', 'Rotation', -90, 'FontSize', 12, 'FontWeight', 'bold');
-  text(0, 1.05, 'CAFA2 top models \rightarrow', 'FontSize', 12, 'FontWeight', 'bold');
+  text(-0.05, 1-padding, 'CAFA3 top models \rightarrow', 'Rotation', -90, 'FontSize', 12, 'FontWeight', 'bold');
+  text(0, 1.05, 'CAFA4 top models \rightarrow', 'FontSize', 12, 'FontWeight', 'bold');
 
   for i = 1 : n
     for j = 1 : m
@@ -198,7 +201,7 @@ function [] = cafa_plot_duel_fmax(pfile, data, bsl_data, ont)
   ax_naive.YLim       = [bar_ymin, bar_ymax];
   ax_naive.Box        = 'off';
   ax_naive.XTick      = [1, 2];
-  ax_naive.XTickLabel = {'2011', '2014'};
+  ax_naive.XTickLabel = {'2017', '2020'};
   % }}}
 
   % plot BLAST comparison {{{
@@ -217,7 +220,7 @@ function [] = cafa_plot_duel_fmax(pfile, data, bsl_data, ont)
   ax_blast.YLim       = [bar_ymin, bar_ymax];
   ax_blast.Box        = 'off';
   ax_blast.XTick      = [1, 2];
-  ax_blast.XTickLabel = {'2011', '2014'};
+  ax_blast.XTickLabel = {'2017', '2020'};
   % }}}
 
   % put ontology tag {{{

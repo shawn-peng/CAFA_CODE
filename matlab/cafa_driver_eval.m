@@ -69,10 +69,11 @@ function [] = cafa_driver_eval(cfg)
     % parallel evaluation for batch running
     p = gcp('nocreate');
     if isempty(p)
-      parpool(8);
+      parpool(32);
     end
 
     parfor i = 1 : n
+%     for i = 1 : n
       % specify info for the model
       local_cfg = config;
       mid       = local_cfg.model{i};

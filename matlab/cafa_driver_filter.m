@@ -49,9 +49,15 @@ function [] = cafa_driver_filter(idir, odir, bm)
   end
   % }}}
 
+  % parallel evaluation for batch running
+  p = gcp('nocreate');
+  if isempty(p)
+    parpool(32);
+  end
+
   % filter regular models {{{
   files = dir(fullfile(idir, 'M*'));
-  for i = 1 : numel(files)
+  parfor i = 1 : numel(files)
     [~, mid] = fileparts(files(i).name);
     fprintf('filtering model [%s]\n', mid);
 

@@ -160,7 +160,7 @@ function [sel, bsl] = cafa_sel_top_seq_prcurve(K, prcurves, naive, blast, reg, i
     % remove points that are strickly worse that another one {{{
     % (rc(i), pr(i)) is strickly less than (rc(j), pr(j)), if
     % rc(i) < rc(j) and pr(i) < pr(j).
-    prcurves{i} = loc_remove_points(prcurves{i});
+%     prcurves{i} = loc_remove_points(prcurves{i});
     % }}}
 
     % remove the point on the curve that corresp. to tau = 0.00

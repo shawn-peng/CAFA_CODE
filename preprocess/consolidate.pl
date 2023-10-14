@@ -41,6 +41,14 @@ if ($ARGV[0] eq "c" || $ARGV[0] eq "-c") {
     $out_dir = $ARGV[1];
 }
 
+# no buffer when redirecting
+my $old_fh = select(STDOUT);
+$| = 1;
+select($old_fh);
+$old_fh = select(STDERR);
+$| = 1;
+select($old_fh);
+
 my (@teams, $team);
 
 open(my $log, ">", $out_dir . "log.txt") or die "\nERROR: cannot open $out_dir" . "log.txt: $!\n";
@@ -126,9 +134,10 @@ foreach $team (@teams) {
                 # AUTHOR, MODEL, KEYWORDS
 
                 $running = <FIN>;
-                if ($running =~ /^AUTHOR\s/) {
-                    $running =~ s/AUTHOR\s*(\w+([\s-]+\w+)*)\s*\r?\n/$1/; # remove tailing DOS/Unix style cartridge return
+                if ($running =~ /^AUTHOR\s*([\w_.]+([\s,-]+[\w_.]+)*)[\s,]*\r?\n/) {
+                    $running =~ s/^AUTHOR\s*([\w_.]+([\s,-]+[\w_.]+)*)[\s,]*\r?\n/$1/; # remove tailing DOS/Unix style cartridge return
                     #print "$mfile | author [$running]\n";
+					#print $log "author_tag $running\n";
                     push(@author_tags, $running);
                 } else {
                     print $log "ERROR: incorrect AUTHOR field in $mfile\n";
@@ -137,8 +146,13 @@ foreach $team (@teams) {
 
                 $running = <FIN>;
                 if ($running =~ /^MODEL\s*[123]\s*$/) {
-                    $running =~ s/MODEL\s*([123])\s*\r?\n/$1/; # remove tailing DOS/Unix style cartridge return
-                    push(@model_tags, $running);
+					# shawn use model number from filename
+					#$running =~ s/MODEL\s*([123])\s*\r?\n/$1/; # remove tailing DOS/Unix style cartridge return
+					#push(@model_tags, $running);
+					$running = $mfile;
+					$running =~ s/.*\/[\w -_]*_([123])_(\d*_[gd]o|hpo).txt/$1/;
+					#print $log "model_tag $running\n";
+					push(@model_tags, $running);
                 } else {
                     print $log "ERROR: incorrect MODEL field in $mfile\n";
                     $error_bit = 1;
@@ -148,7 +162,7 @@ foreach $team (@teams) {
             }
 
             if ($error_bit == 1) {
-                print "$ext_ID: A format error occurred!\n";
+                print "$ext_ID : A format error occurred!\n";
                 $error_bit = 0; # clear error bit
                 next;
             }
@@ -157,11 +171,12 @@ foreach $team (@teams) {
             my $running_author = $author_tags[0];
             my $running_model  = $model_tags[0];
             for (my $i = 1; $i < @author_tags; $i++) {
-                if ($author_tags[$i] ne $running_author) {
+                if (lc $author_tags[$i] ne lc $running_author) {
                     print $log "ERROR: inconsistent AUTHOR field for $ext_ID\n";
                     $error_bit = 1;
                 }
                 if ($model_tags[$i] ne $running_model) {
+					print $log "$model_tags[$i] vs $running_model\n";
                     print $log "ERROR: inconsistent MODEL field for $ext_ID\n";
                     $error_bit = 1;
                 }
@@ -169,9 +184,9 @@ foreach $team (@teams) {
 
             # print out check result
             if ($error_bit == 0) {
-                print "$ext_ID: CHECK PASSED! | AUTHOR [$author_tags[0]] | MODEL [$model_tags[0]]\n";
+                print "$ext_ID : CHECK PASSED! | AUTHOR [$author_tags[0]] | MODEL [$model_tags[0]]\n";
             } else {
-                print "$ext_ID: An error occurred during consistency check!\n";
+                print "$ext_ID : An error occurred during consistency check!\n";
                 $error_bit = 0; # clear error bit
                 next;
             }
